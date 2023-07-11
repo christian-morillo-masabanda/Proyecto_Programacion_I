@@ -20,6 +20,8 @@ float productValues[MAX_CLIENTES][MAX_PRODUCTOS];
 
 void addProduct();
 void viewProducts();
+void modifyProduct();
+void deleteProduct();
 void generateID(char *id);
 void saveData();
 void loadData();
@@ -35,7 +37,9 @@ int main(int argc, char *argv[]) {
         printf("Menu de opciones:\n");
         printf("1. Agregar Cliente\n");
         printf("2. Ver productos\n");
-        printf("3. Salir\n");
+        printf("3. Modificar producto\n");
+        printf("4. Eliminar producto\n");
+        printf("5. Salir\n");
         printf("Ingresar opcion: ");
         scanf("%d", &choice);
 
@@ -47,6 +51,12 @@ int main(int argc, char *argv[]) {
                 viewProducts();
                 break;
             case 3:
+                modifyProduct();
+                break;
+            case 4:
+                deleteProduct();
+                break;
+            case 5:
                 printf("*****Gracias por usar la bodega****");
                 saveData();
                 exit(0);
@@ -88,7 +98,7 @@ void addProduct() {
     int numProducts;
     printf("Ingrese el numero de productos que desea guardar (1-5): ");
     scanf("%d", &numProducts);
-    getchar();  
+    getchar();
 
     if (numProducts < 1 || numProducts > 5) {
         printf("Número de productos inválido.\n");
@@ -102,7 +112,7 @@ void addProduct() {
         gets(productQuantities[numClientes][i]);
         printf("Ingrese el valor unitario del producto %d: ", i + 1);
         scanf("%f", &productValues[numClientes][i]);
-        getchar();  
+        getchar();
     }
 
     generateID(ClientesIDs[numClientes]);
@@ -146,6 +156,75 @@ void viewProducts() {
             }
             printf("Valor total: %.2f\n", totalValue);
         }
+    }
+}
+
+void modifyProduct() {
+    char searchName[50];
+    printf("Ingrese el nombre del producto a modificar: ");
+    getchar();
+    gets(searchName);
+
+    int found = 0;
+    for (int i = 0; i < numClientes; i++) {
+        for (int j = 0; j < numProductos[i]; j++) {
+            if (strcmp(productNames[i][j], searchName) == 0) {
+                printf("Ingrese el nuevo nombre del producto: ");
+                gets(productNames[i][j]);
+                printf("Ingrese las nuevas unidades del producto: ");
+                gets(productQuantities[i][j]);
+                printf("Ingrese el nuevo valor unitario del producto: ");
+                scanf("%f", &productValues[i][j]);
+                getchar();
+
+                found = 1;
+                break;
+            }
+        }
+        if (found)
+            break;
+    }
+
+    if (found) {
+        printf("\n");
+        printf("Producto modificado exitosamente.\n\n");
+    } else {
+        printf("\n");
+        printf("Producto no encontrado.\n\n");
+    }
+}
+
+void deleteProduct() {
+    char searchName[50];
+    printf("Ingrese el nombre del producto a eliminar: ");
+    getchar();
+    gets(searchName);
+
+    int found = 0;
+    for (int i = 0; i < numClientes; i++) {
+        for (int j = 0; j < numProductos[i]; j++) {
+            if (strcmp(productNames[i][j], searchName) == 0) {
+                for (int k = j; k < numProductos[i] - 1; k++) {
+                    strcpy(productNames[i][k], productNames[i][k + 1]);
+                    strcpy(productQuantities[i][k], productQuantities[i][k + 1]);
+                    productValues[i][k] = productValues[i][k + 1];
+                }
+                numProductos[i]--;
+
+                found = 1;
+                break;
+            }
+        }
+        if (found)
+            break;
+    }
+
+    if (found) {
+        printf("\n");
+        printf("Producto eliminado exitosamente.\n\n");
+    } else {
+        printf("\n");
+        printf("Producto no encontrado.\n\n");
     }
 }
 
